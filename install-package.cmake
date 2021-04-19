@@ -3,35 +3,6 @@ cmake_policy(VERSION 3.14)
 
 include(CMakePackageConfigHelpers)
 
-# Packages generated with this function can be taken from the install directory and moved to somewhere else, and still work.
-
-# Multiple configuratiions can be installed into the same directory, 
-# as long as the configurations have the same targets file, and the installed files are put in config specific directories. (Such as ${CMAKE_INSTALL_LIBDIR}/$<CONFIG>/ for libraries)
-# The targets file can differ when linking directly to a library file (not a library target) because the file found might be in a different directory in each config.
-
-# Its best to NOT link or refer to any file not being installed along with your package, as the paths linked to will be specific to your system.
-# If you are going to link to an installed file, you must wrap the link in the $<BUILD_INTERFACE: ABSOLUTE_PATH> generator expression when building, 
-# and $<INSTALL_INTERFACE: RELATIVE INSTALL PATH> when installing.
-
-# Having different interface properties per config, put in by if() statements will also disallow multiple configurations being installed to one directory.
-# This can be corrected by putting the differing interface properties into a $<$<CONFIG:CONFIG_NAME>:PROPERTY> generator expression.
-# In general, ALL properties on targets should be inside generator expressions when you want them to apply to specific configurations only.
-
-# The ARCH_INDEPENDENT option should really only be used for header only libraries. (Aka INTERFACE library targets)
-
-# The EXPORT_LINK_INTERFACE_LIBRARIES options should not be used if possible. It causes the config specific data to put into the targets export file, which will
-# Cause the same problem metioned above (See Multiple configurations paragraph).
-
-# COMPATIBILITY should be one of these values: <AnyNewerVersion | SameMajorVersion | SameMinorVersion | ExactVersion>
-
-# PRECONFIG and POSTCONFIG are used to specify macros to run pre and post configuration of the package.
-# They must reference an actual file, and it must have the .cmake extention.
-# They 
-
-# The CONFIGURATIONS multi value argument is used to whitelist certain configurations.
-# If, for instance, you had only specificly supported Release and Debug configurations, all other configurations would cause an error when attempting to find the package.
-# In most cases this will not be necessary, as long as you package the main list of basic configurations: Debug, Release, RelWithDebInfo, MinSizeRel
-
 function(install_package)
 	set(PARSE_OPTION
 		"ARCH_INDEPENDENT"
