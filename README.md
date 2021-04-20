@@ -6,7 +6,7 @@ This package provides a function to make installing cmake targets much easier.
 
 Packages generated with this function can be taken from the install directory and moved to somewhere else, and still work.
 
-Multiple configuratiions can be installed into the same directory, so long as its possible for each configuration to tell which files belong to it. One way to do this would be to put each configuration into its own directory using generator expressions like this:
+Multiple configurations can be installed into the same directory, so long as its possible for each configuration to tell which files belong to it. One way to do this would be to put each configuration into its own directory using generator expressions like this:
 ```cmake
 install(TARGETS target
 	EXPORT target-export
@@ -27,7 +27,7 @@ target_include_directories(target PUBLIC
 
 Having different interface properties per config, put in by if() statements will disallow multiple configurations being installed to one directory. This can be mitigated by using generator expressions instead of configuration time if statements.
 For instance:
-```
+```cmake
 target_compile_definitions(target PUBLIC 
 	$<IF:<CONFIG:Debug>,DEBUG,NDEBUG>
 )
@@ -41,7 +41,8 @@ The ARCH_INDEPENDENT option should be used for header only libraries and INTERFA
 
 The EXPORT_LINK_INTERFACE_LIBRARIES options should not be used if possible.
 
-COMPATIBILITY should be one of these values: `<AnyNewerVersion | SameMajorVersion | SameMinorVersion | ExactVersion>`
+COMPATIBILITY should be one of these values: 
+`<AnyNewerVersion | SameMajorVersion | SameMinorVersion | ExactVersion>`
 
 PRECONFIG and POSTCONFIG are used to specify cmake files to be included before the package targets are initialized, and after the package targets are initialized respectively.
 Both PRECONFIG and POSTCONFIG must reference an actual file, and it must have the .cmake extention. 
