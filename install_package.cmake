@@ -1,6 +1,3 @@
-cmake_policy(PUSH)
-cmake_policy(VERSION 3.14)
-
 include(CMakePackageConfigHelpers)
 
 function(install_package)
@@ -187,7 +184,3 @@ function(install_package)
 			${PACK_ABS_DESTINATION} # Full destination
 	)
 endfunction()
-
-#
-#
-cmake_policy(POP)
