@@ -1,0 +1,21 @@
+# This script is modified from the SDL project 'cmake_uninstall.cmake.in' file
+
+if (NOT EXISTS "@PROJECT_BINARY_DIR@/install_manifest.txt")
+    message(FATAL_ERROR "Cannot find install manifest: \"@PROJECT_BINARY_DIR@/install_manifest.txt\"")
+endif()
+
+file(READ "@PROJECT_BINARY_DIR@/install_manifest.txt" files)
+string(REGEX REPLACE "\n" ";" files "${files}")
+foreach (file ${files})
+    message(STATUS "Uninstalling \"${file}\"")
+    execute_process(
+        COMMAND "@CMAKE_COMMAND@" "-E" "remove" "${file}"
+        OUTPUT_VARIABLE rm_out
+        RESULT_VARIABLE rm_retval
+    )
+    if(NOT ${rm_retval} EQUAL 0)
+        message(FATAL_ERROR "Problem when removing \"${file}\"")
+    endif()
+endforeach()
+
+message("Finished uninstalling all files specified in manifest")
