@@ -13,7 +13,6 @@ function(install_package)
 		"VERSION"
 		"COMPATIBILITY"
 		"COMPONENT"
-		"NAMELINK_COMPONENT"
 		"DESTINATION"
 		"PRECONFIG"
 		"POSTCONFIG"
@@ -73,32 +72,50 @@ function(install_package)
 		"install_package: Expected form for argument is \'COMPATIBILITY <AnyNewerVersion|SameMajorVersion|SameMinorVersion|ExactVersion>\'")
 	endif()
 
-	if(NOT DEFINED PACK_NAMESPACE)
-		set(PACK_NAMESPACE "")
+	if(DEFINED PACK_NAMESPACE)
+		set(PACK_NAMESPACE "NAMESPACE" "${PACK_NAMESPACE}")
 	endif()
 
-	# Fixup the options so they are either the correct string, or empty.
-	# Otherwise they'd just be TRUE or FALSE strings.
+	if(DEFINED PACK_PERMISSIONS)
+		set(PACK_PERMISSIONS "PERMISSIONS" "${PACK_PERMISSIONS}")
+	endif()
+
 	if(${PACK_EXPORT_LINK_INTERFACE_LIBRARIES})
 		set(PACK_EXPORT_LINK_INTERFACE_LIBRARIES "EXPORT_LINK_INTERFACE_LIBRARIES")
 		message(DEPRECATION "The EXPORT_LINK_INTERFACE_LIBRARIES option should not be used if possible")
 	else()
-		set(PACK_EXPORT_LINK_INTERFACE_LIBRARIES "")
+		set(PACK_EXPORT_LINK_INTERFACE_LIBRARIES)
 	endif()
 	
-	if(${PACK_ARCH_INDEPENDENT})
+	if(PACK_ARCH_INDEPENDENT)
 		set(PACK_ARCH_INDEPENDENT "ARCH_INDEPENDENT")
 	else()
-		set(PACK_ARCH_INDEPENDENT "")
+		set(PACK_ARCH_INDEPENDENT)
+	endif()
+
+	if(DEFINED PACK_COMPONENT)
+		set(PACK_COMPONENT "COMPONENT" "${PACK_COMPONENT}")
+	endif()
+
+	if(DEFINED PACK_CONFIGURATIONS)
+		set(PACK_CONFIGURATIONS "CONFIGURATIONS" "${PACK_CONFIGURATIONS}")
+	endif()
+
+	if(PACK_EXCLUDE_FROM_ALL)
+		set(PACK_EXCLUDE_FROM_ALL "EXCLUDE_FROM_ALL")
+	else()
+		set(PACK_EXCLUDE_FROM_ALL)
 	endif()
 
 	# Install the targets from the build tree to the install destination.
-	install(EXPORT ${PACK_EXPORT}
-		DESTINATION ${PACK_REL_DESTINATION}
+	install(EXPORT ${PACK_EXPORT} DESTINATION ${PACK_REL_DESTINATION}
 		FILE ${PACK_NAME}-targets.cmake
-		NAMESPACE ${PACK_NAMESPACE}
-		CONFIGURATIONS ${PACK_CONFIGURATIONS}
+		${PACK_NAMESPACE}
+		${PACK_PERMISSIONS}
+		${PACK_CONFIGURATIONS}
 		${PACK_EXPORT_LINK_INTERFACE_LIBRARIES}
+		${PACK_COMPONENT}
+		${PACK_EXCLUDE_FROM_ALL}
 	)
 	
 	foreach(CONFIG IN ITEMS "PACK_PRECONFIG" "PACK_POSTCONFIG")
@@ -152,7 +169,7 @@ function(install_package)
 		"set(@PACK_NAME@_CONFIG_DIR @PACK_REL_DESTINATION@)\n"
 		"\n"
 		"if(NOT @PACK_NAME@_FIND_QUIETLY)\n"
-		"  message(STATUS \"Found @PACK_NAME@: \$\{PACKAGE_PREFIX_DIR\}\")\n"
+		"  message(STATUS \"Found @PACK_NAME@ (version @PACK_VERSION@): \$\{PACKAGE_PREFIX_DIR\}\")\n"
 		"endif()\n"
 		"\n"
 		"mark_as_advanced(@PACK_NAME@_VERSION @PACK_NAME@_PREFIX_DIR @PACK_NAME@_ROOT_DIR @PACK_NAME@_CONFIG_DIR)\n\n"
@@ -169,14 +186,18 @@ function(install_package)
 		"${CMAKE_CURRENT_BINARY_DIR}/tmp/ConfigTemplate.cmake.in"
 		"${CMAKE_CURRENT_BINARY_DIR}/tmp/${PACK_NAME}-config.cmake"
 		INSTALL_DESTINATION ${PACK_REL_DESTINATION} # Relative destination
-		)
+	)
 	
 	# Install the generated config files.
 	install(
 		FILES
 			"${CMAKE_CURRENT_BINARY_DIR}/tmp/${PACK_NAME}-config-version.cmake"
 			"${CMAKE_CURRENT_BINARY_DIR}/tmp/${PACK_NAME}-config.cmake"
-		DESTINATION
-			${PACK_ABS_DESTINATION} # Full destination
+		DESTINATION ${PACK_ABS_DESTINATION}
+
+		${PACK_PERMISSIONS}
+		${PACK_CONFIGURATIONS}
+		${PACK_COMPONENT}
+		${PACK_EXCLUDE_FROM_ALL}
 	)
 endfunction()
