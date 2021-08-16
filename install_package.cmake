@@ -172,7 +172,7 @@ function(install_package)
 		"  message(STATUS \"Found @PACK_NAME@ (version @PACK_VERSION@): \$\{PACKAGE_PREFIX_DIR\}\")\n"
 		"endif()\n"
 		"\n"
-		"mark_as_advanced(@PACK_NAME@_VERSION @PACK_NAME@_PREFIX_DIR @PACK_NAME@_ROOT_DIR @PACK_NAME@_CONFIG_DIR)\n\n"
+		"mark_as_advanced(@PACK_NAME@_VERSION @PACK_NAME@_PREFIX_DIR @PACK_NAME@_CONFIG_DIR)\n\n"
 		"${PACK_PRECONFIG_INCLUDE}\n"
 		"include(\"\$\{CMAKE_CURRENT_LIST_DIR\}/@PACK_NAME@-targets.cmake\")\n"
 		"${PACK_POSTCONFIG_INCLUDE}\n"
