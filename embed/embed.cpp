@@ -17,12 +17,22 @@
 	 cembed -i <manifest_file> -o <output_file>
 
 	Options
-	 --version                = Print a version string
-	 --help                   = Print this help string
-	 --output,-o <name>       = (REQUIRED) Specify the name of the source file to generate, expects something like {name}.c
-	 --input,-i  <manifest>   = (REQUIRED) The location of the manifest file to use, must be an actual filename
-	 --header    <name>       = Specify the name of the header file to generate, otherwise inferred from output name
-	 --dir,-d    <directory>  = Change the working directory to source manifest files from
+	 --version                   = Print a version string
+	 --help                      = Print this help string
+	 --output,-o    <name>       = (REQUIRED) Specify the name of the source file to generate, expects something like {name}.c
+	 --input,-i     <manifest>   = (REQUIRED) The location of the manifest file to use, must be an actual filename
+	 --header       <name>       = Specify the name of the header file to generate, otherwise inferred from output name
+	 --dir,-d       <directory>  = Change the working directory to source manifest files from
+	 --namespace,-n <name>       = Specify a custom namespace for the embedded files
+*/
+
+/*
+// predefined text
+static constexpr char filedef[] = "static const char file";
+static constexpr char filestart[] = "[] = { ";
+static constexpr char fileend[] = " };";
+
+static constexpr char 
 */
 
 enum class Token {
