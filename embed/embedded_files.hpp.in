@@ -1,0 +1,15 @@
+#pragma once
+
+namespace ${EZ_EMBEDDED_NAMESPACE} {
+	struct FileEntry {
+		const char * name;
+		const long long namelen;
+
+		const char * data;
+		const long long datalen;
+	};
+
+	const int filecount = ${EZ_EMBEDDED_FILECOUNT};
+
+	extern const FileEntry files[${EZ_EMBEDDED_FILECOUNT}];
+}

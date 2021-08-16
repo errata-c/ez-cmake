@@ -4,6 +4,7 @@ function(install_package)
 	set(PARSE_OPTION
 		"ARCH_INDEPENDENT"
 		"EXPORT_LINK_INTERFACE_LIBRARIES"
+		"EXCLUDE_FROM_ALL"
 	)
 	set(PARSE_SINGLE_VALUE
 		"NAME"
@@ -11,12 +12,15 @@ function(install_package)
 		"EXPORT"
 		"VERSION"
 		"COMPATIBILITY"
+		"COMPONENT"
+		"NAMELINK_COMPONENT"
 		"DESTINATION"
 		"PRECONFIG"
 		"POSTCONFIG"
 	)
 	set(PARSE_MULTI_VALUE
 		"CONFIGURATIONS"
+		"PERMISSIONS"
 	)
 
 	cmake_parse_arguments(PARSE_ARGV 0
@@ -135,34 +139,26 @@ function(install_package)
 		${PACK_ARCH_INDEPENDENT}
 	)
 
-	# We create the file in a location we have write access to, as it will be installed AFTER building, not immediately.
+	# We create the file in a location we have write access to as it will be installed AFTER configuration, not immediately.
 	# Additionally, the file is written directly to have less external dependencies.
 	file(WRITE
 		"${CMAKE_CURRENT_BINARY_DIR}/tmp/ConfigTemplate.cmake.in"
-		"\n"
 		"include_guard(DIRECTORY)\n"
 		"include(CMakeFindDependencyMacro)\n"
 		"@PACKAGE_INIT@\n"
 		"\n"
-		"set(PACK_NAME @PACK_NAME@)\n"
-		"set(PACK_VERSION @PACK_VERSION@)\n"
-		"set(PACK_ROOT \$\{PACKAGE_PREFIX_DIR\})\n"
-		"set(PACK_CONFIG_DIR @PACK_REL_DESTINATION@)\n"
+		"set(@PACK_NAME@_VERSION @PACK_VERSION@)\n"
+		"set(@PACK_NAME@_PREFIX_DIR \$\{PACKAGE_PREFIX_DIR\})\n"
+		"set(@PACK_NAME@_CONFIG_DIR @PACK_REL_DESTINATION@)\n"
 		"\n"
-		"set(@PACK_NAME@_VERSION \$\{PACK_VERSION\})\n"
-		"set(@PACK_NAME@_PREFIX_DIR \$\{PACK_ROOT\})\n"
-		"set(@PACK_NAME@_ROOT_DIR \$\{PACK_ROOT\})\n"
-		"set(@PACK_NAME@_CONFIG_DIR \$\{PACK_CONFIG_DIR\})\n"
+		"if(NOT @PACK_NAME@_FIND_QUIETLY)\n"
+		"  message(STATUS \"Found @PACK_NAME@: \$\{PACKAGE_PREFIX_DIR\}\")\n"
+		"endif()\n"
 		"\n"
 		"mark_as_advanced(@PACK_NAME@_VERSION @PACK_NAME@_PREFIX_DIR @PACK_NAME@_ROOT_DIR @PACK_NAME@_CONFIG_DIR)\n\n"
-		"${PACK_PRECONFIG_INCLUDE}\n\n"
-		"include(\"\$\{CMAKE_CURRENT_LIST_DIR\}/@PACK_NAME@-targets.cmake\")\n\n"
+		"${PACK_PRECONFIG_INCLUDE}\n"
+		"include(\"\$\{CMAKE_CURRENT_LIST_DIR\}/@PACK_NAME@-targets.cmake\")\n"
 		"${PACK_POSTCONFIG_INCLUDE}\n"
-		"\n"
-		"unset(PACK_NAME)\n"
-		"unset(PACK_VERSION)\n"
-		"unset(PACK_ROOT)\n"
-		"unset(PACK_CONFIG_DIR)\n"
 		"\n"
 		"check_required_components(@PACK_NAME@)\n"
 	)
