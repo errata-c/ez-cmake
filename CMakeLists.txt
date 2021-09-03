@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(EZ_CMAKE
-	VERSION 0.5.0
+	VERSION 0.6.0
 	DESCRIPTION "CMake utilities for installing and uninstalling packages"
 	HOMEPAGE_URL "https://github.com/errata-c/ez-cmake"
 )
