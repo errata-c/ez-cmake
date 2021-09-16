@@ -41,14 +41,12 @@ function(install_package)
 
 	if("${PACK_DESTINATION}" STREQUAL "DEFAULT")
 		set(PACK_DESTINATION "share/${PACK_NAME}")
-	elseif(IS_ABSOLUTE ${PACK_DESTINATION})
+	elseif(IS_ABSOLUTE "${PACK_DESTINATION}")
 		message(WARNING "The DESTINATION for the package ${PACK_NAME} is an absolute path, install_package expects a relative path.\n"
 		"This can cause issues if the absolute path of ${PACK_NAME} is not actually along the same directory branch as CMAKE_INSTALL_PREFIX.")
-		file(RELATIVE_PATH PACK_DESTINATION ${CMAKE_INSTALL_PREFIX} ${PACK_DESTINATION})
+		
+		file(RELATIVE_PATH PACK_DESTINATION "${CMAKE_INSTALL_PREFIX}" "${PACK_DESTINATION}")
 	endif()
-	
-	set(PACK_REL_DESTINATION ${PACK_DESTINATION})
-	set(PACK_ABS_DESTINATION ${CMAKE_INSTALL_PREFIX}/${PACK_DESTINATION})
 	
 	if(NOT DEFINED PACK_EXPORT)
 		message(FATAL_ERROR "install_package: No EXPORT passed into install_package function\n"
@@ -58,7 +56,7 @@ function(install_package)
 	if(NOT DEFINED PACK_VERSION)
 		message(FATAL_ERROR "install_package: No VERSION passed into install_package function.\n"
 		"install_package: Expected form for argument is \'VERSION <major.minor.patch>\'")
-	elseif(NOT ${PACK_VERSION} MATCHES "[0-9]+(\.[0-9]+(\.[0-9])?)?")
+	elseif(NOT "${PACK_VERSION}" MATCHES "[0-9]+(\.[0-9]+(\.[0-9])?)?")
 		message(FATAL_ERROR "install_package: Invalid version number passed to install_package function")
 	endif()
 
@@ -80,7 +78,7 @@ function(install_package)
 		set(PACK_PERMISSIONS "PERMISSIONS" "${PACK_PERMISSIONS}")
 	endif()
 
-	if(${PACK_EXPORT_LINK_INTERFACE_LIBRARIES})
+	if(PACK_EXPORT_LINK_INTERFACE_LIBRARIES)
 		set(PACK_EXPORT_LINK_INTERFACE_LIBRARIES "EXPORT_LINK_INTERFACE_LIBRARIES")
 		message(DEPRECATION "The EXPORT_LINK_INTERFACE_LIBRARIES option should not be used if possible")
 	else()
@@ -108,8 +106,8 @@ function(install_package)
 	endif()
 
 	# Install the targets from the build tree to the install destination.
-	install(EXPORT ${PACK_EXPORT} DESTINATION ${PACK_REL_DESTINATION}
-		FILE ${PACK_NAME}-targets.cmake
+	install(EXPORT "${PACK_EXPORT}" DESTINATION "${PACK_DESTINATION}"
+		FILE "${PACK_NAME}-targets.cmake"
 		${PACK_NAMESPACE}
 		${PACK_PERMISSIONS}
 		${PACK_CONFIGURATIONS}
@@ -141,7 +139,7 @@ function(install_package)
 				FILES
 					${CONFIG_FILE}
 				DESTINATION
-					"${PACK_ABS_DESTINATION}"
+					"${PACK_DESTINATION}"
 			)
 		else()
 			set(${CONFIG}_INCLUDE "")
@@ -166,7 +164,7 @@ function(install_package)
 		"\n"
 		"set(@PACK_NAME@_VERSION @PACK_VERSION@)\n"
 		"set(@PACK_NAME@_PREFIX_DIR \$\{PACKAGE_PREFIX_DIR\})\n"
-		"set(@PACK_NAME@_CONFIG_DIR @PACK_REL_DESTINATION@)\n"
+		"set(@PACK_NAME@_CONFIG_DIR @PACK_DESTINATION@)\n"
 		"\n"
 		"if(NOT @PACK_NAME@_FIND_QUIETLY)\n"
 		"  message(STATUS \"Found @PACK_NAME@ (version @PACK_VERSION@): \$\{PACKAGE_PREFIX_DIR\}\")\n"
@@ -185,7 +183,7 @@ function(install_package)
 	configure_package_config_file(
 		"${CMAKE_CURRENT_BINARY_DIR}/tmp/ConfigTemplate.cmake.in"
 		"${CMAKE_CURRENT_BINARY_DIR}/tmp/${PACK_NAME}-config.cmake"
-		INSTALL_DESTINATION ${PACK_REL_DESTINATION} # Relative destination
+		INSTALL_DESTINATION "${PACK_DESTINATION}" # Relative destination
 	)
 	
 	# Install the generated config files.
@@ -193,7 +191,7 @@ function(install_package)
 		FILES
 			"${CMAKE_CURRENT_BINARY_DIR}/tmp/${PACK_NAME}-config-version.cmake"
 			"${CMAKE_CURRENT_BINARY_DIR}/tmp/${PACK_NAME}-config.cmake"
-		DESTINATION ${PACK_ABS_DESTINATION}
+		DESTINATION "${PACK_DESTINATION}"
 
 		${PACK_PERMISSIONS}
 		${PACK_CONFIGURATIONS}
