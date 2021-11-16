@@ -11,3 +11,4 @@ project(EZ_CMAKE
 # Then we just include install_package.cmake to make the function available
 include(install_package.cmake)
 include(add_uninstall_target.cmake)
+include(utilities.cmake)
